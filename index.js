@@ -3,7 +3,7 @@
  * A simple and smart rate limiter for general use with promise support.
  *
  * @author Phoenix (github.com/azusa0127)
- * @version 1.0.2
+ * @version 1.0.3
  */
 const Semaphore = require(`simple-semaphore`);
 
@@ -24,6 +24,7 @@ class Limiter {
     this.timer = null;
     // Handle for the first enter call to start the interval loop.
     this._setTimer = () => {
+      if (this.timer) return; // Escape when timer is already set.
       this.timer = evenMode
         ? setInterval(() => this.sem.signal(1 - this.sem._sem), interval * 1000 / rate)
         : setInterval(() => this.sem.signal(rate - this.sem._sem), interval * 1000);
@@ -40,9 +41,9 @@ class Limiter {
    * @memberof Limiter
    */
   async enter() {
+    if (!this.timer) this._setTimer();
     await this.sem.wait();
-    if (!this.timer && this.sem._queue) this._setTimer();
-    else if (!this.sem._queue.length) this.release();
+    if (!this.sem._queue.length) this.release();
   }
 
   /**

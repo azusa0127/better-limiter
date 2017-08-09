@@ -97,8 +97,8 @@ for (let i = 0; i < 10; i++)
 ```
 
 ## Changelog
-1.0.2 / 2017-08-09
-  * README revision.
+1.0.3 / 2017-08-09
+  * README revision and bug-fix.
 
 1.0.0 / Initial Release.
 
