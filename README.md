@@ -2,8 +2,8 @@
 A simple and smart rate limiter for general use with promise support.
 
 ## Install
-```
-npm i better-limiter
+```bash
+npm install better-limiter
 ```
 
 ## Requirement
@@ -51,7 +51,7 @@ See a full example in [`example.js`](/example.js)
 
 Require
 ```javascript
-const Limiter = require(`./index`);
+const Limiter = require(`better-limiter`);
 ```
 Initiliaze
 ```javascript
@@ -75,6 +75,9 @@ const rp = require(`util`).promisify(require(`request`)); // Promisified reqeust
 const request = (...args) => limt.enter().then(() => rp(...args));
 ```
 ## Changelog
+1.0.1 / 2017-08-09
+  * README typo-fix.
+
 1.0.0 / Initial Release.
 
 ## Lisense
