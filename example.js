@@ -24,7 +24,7 @@ const evenRequest = async (...args) => {
 const main = async () => {
   console.log(`${new Date().toLocaleTimeString()} - Start limt demo...`);
   await Promise.all(
-    [...Array(6)].map(() =>  // [...Array(6)] is simply an list of 6 undefined elements.
+    [...Array(6)].map(() =>  // [...Array(6)] is simply a list of 6 undefined elements.
       request(`http://google.com`).then(res =>
         console.log(`${new Date().toLocaleTimeString()} - ResponseCode - ${res.statusCode}`),
       ),

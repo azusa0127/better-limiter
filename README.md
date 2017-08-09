@@ -1,5 +1,5 @@
 # better-limiter
-A simple and smart rate limiter for general use with promise support.
+A simple and smart rate limiter in promise.
 
 ## Install
 ```bash
@@ -58,6 +58,7 @@ Initiliaze
 const limt = new Limiter(3.0, 3);
 const even_limt = new Limiter(3.0, 3, true);
 ```
+
 Redirect the request() function through the limiter
 ```javascript
 const rp = require(`util`).promisify(require(`request`)); // Promisified reqeust()
@@ -79,9 +80,25 @@ request(`http://google.com`).then(res => console.log(res.statusCode));
 request(`http://google.com`).then(res => console.log(res.statusCode));
 request(`http://google.com`).then(res => console.log(res.statusCode));
 ```
+
+Limited log scrolling.
+```javascript
+console.log(`Demo for log without limiter:`);
+for (let i = 0; i < 10; i++)
+  console.log(`Log message ${i}`);
+
+// Create a limiter in evenMode at rate 2/s.
+const limt = new Limiter(1.0, 2, true);
+
+console.log();
+console.log(`Demo for log with limiter:`);
+for (let i = 0; i < 10; i++)
+  limt.enter().then(() => console.log(`Log message ${i}`));
+```
+
 ## Changelog
 1.0.2 / 2017-08-09
-  * README typo-fix.
+  * README revision.
 
 1.0.0 / Initial Release.
 

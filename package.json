@@ -1,7 +1,7 @@
 {
   "name": "better-limiter",
-  "version": "1.0.1",
-  "description": "A simple and smart rate limiter for general use with promise support.",
+  "version": "1.0.2",
+  "description": "A simple and smart rate limiter in promise.",
   "scripts": {
     "test": "node example.js"
   },
