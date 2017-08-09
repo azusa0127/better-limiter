@@ -69,10 +69,18 @@ const request = async (...args) => {
 // Or in promise style.
 const request = (...args) => limt.enter().then(() => rp(...args));
 
-// You may now use request() as you do as usual with promise.
+// You may now use request() as normal promisified request(). e.g. make a bunch of async calls...
+request(`http://google.com`).then(res => console.log(res.statusCode));
+request(`http://google.com`).then(res => console.log(res.statusCode));
+request(`http://google.com`).then(res => console.log(res.statusCode));
+request(`http://google.com`).then(res => console.log(res.statusCode));
+request(`http://google.com`).then(res => console.log(res.statusCode));
+request(`http://google.com`).then(res => console.log(res.statusCode));
+request(`http://google.com`).then(res => console.log(res.statusCode));
+request(`http://google.com`).then(res => console.log(res.statusCode));
 ```
 ## Changelog
-1.0.1 / 2017-08-09
+1.0.2 / 2017-08-09
   * README typo-fix.
 
 1.0.0 / Initial Release.
