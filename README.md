@@ -66,13 +66,10 @@ const request = async (...args) => {
   await limt.enter(); // That's the only line you need :).
   return rp(...args);
 };
-// You may now use request() as you do as usual with promise.
-```
-Promise Style.
-```javascript
-const rp = require(`util`).promisify(require(`request`)); // Promisified reqeust()
-
+// Or in promise style.
 const request = (...args) => limt.enter().then(() => rp(...args));
+
+// You may now use request() as you do as usual with promise.
 ```
 ## Changelog
 1.0.1 / 2017-08-09
