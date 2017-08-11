@@ -49,54 +49,38 @@ module.exports = Limiter;
 ## Example
 See a full example in [`example.js`](/example.js)
 
-Require
+### Require and Initiliaze
 ```javascript
 const Limiter = require(`better-limiter`);
+
+const limt = new Limiter(3.0, 3); // 3 operations allowed for every 3 seconds.
+const even_limt = new Limiter(3.0, 3, true); // 1 operation allowed for every (3.0/3)=1.0 second.
 ```
-Initiliaze
+### Throttle function calles
 ```javascript
-const limt = new Limiter(3.0, 3);
-const even_limt = new Limiter(3.0, 3, true);
+// Limit log scrolling speed.
+for (let i = 0; i < 7; ++i) {
+  limt.throttle(console.log, `better-limiter Demo: NormalMode - ${i}`);
+  even_limt.throttle(console.error, `better-limiter Demo: EvenMode - ${i}`);
+}
 ```
-
-Redirect the request() function through the limiter
+### Make Throttled Functions and redirect the calls.
 ```javascript
-const rp = require(`util`).promisify(require(`request`)); // Promisified reqeust()
+const request = require(`request`);
+// redirect request.get() to a throttled version get()
+const get = limt.makeThrottledFn(request.get);
 
-const request = async (...args) => {
-  await limt.enter(); // That's the only line you need :).
-  return rp(...args);
-};
-// Or in promise style.
-const request = (...args) => limt.enter().then(() => rp(...args));
-
-// You may now use request() as normal promisified request(). e.g. make a bunch of async calls...
-request(`http://google.com`).then(res => console.log(res.statusCode));
-request(`http://google.com`).then(res => console.log(res.statusCode));
-request(`http://google.com`).then(res => console.log(res.statusCode));
-request(`http://google.com`).then(res => console.log(res.statusCode));
-request(`http://google.com`).then(res => console.log(res.statusCode));
-request(`http://google.com`).then(res => console.log(res.statusCode));
-request(`http://google.com`).then(res => console.log(res.statusCode));
-request(`http://google.com`).then(res => console.log(res.statusCode));
-```
-
-Limited log scrolling.
-```javascript
-console.log(`Demo for log without limiter:`);
-for (let i = 0; i < 10; i++)
-  console.log(`Log message ${i}`);
-
-// Create a limiter in evenMode at rate 2/s.
-const limt = new Limiter(1.0, 2, true);
-
-console.log();
-console.log(`Demo for log with limiter:`);
-for (let i = 0; i < 10; i++)
-  limt.enter().then(() => console.log(`Log message ${i}`));
+for (let i = 0; i < 10; ++i)
+  get(`http://google.com`, (err, res) => console.log(`Request#${i} - ${res.statusCode}`));
 ```
 
 ## Changelog
+2.0.0 / 2017-08-10
+  * (Performance) Performance imporvement with updated `simple-semaphore`.
+  + (New API) `throttle(fn, ...args)` and `makeThrottledFn(fn)` added.
+  * (Deprecate) Renamed `release()` into `terminate(releaseLeftoverTasks)` with minor functionality tweak.
+  * (JSDoc) Style improvement.
+
 1.0.3 / 2017-08-09
   * README revision and bug-fix.
 

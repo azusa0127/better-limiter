@@ -24,7 +24,8 @@ const evenRequest = async (...args) => {
 const main = async () => {
   console.log(`${new Date().toLocaleTimeString()} - Start limt demo...`);
   await Promise.all(
-    [...Array(6)].map(() =>  // [...Array(6)] is simply a list of 6 undefined elements.
+    [...Array(6)].map(() =>
+      // [...Array(6)] is simply a list of 6 undefined elements.
       request(`http://google.com`).then(res =>
         console.log(`${new Date().toLocaleTimeString()} - ResponseCode - ${res.statusCode}`),
       ),
@@ -41,6 +42,19 @@ const main = async () => {
     ),
   );
   console.log(`${new Date().toLocaleTimeString()} - End even_limt demo...`);
+  console.log();
+  console.log(`${new Date().toLocaleTimeString()} - Manual Interception demo...`);
+  const p = Promise.all(
+    [...Array(10)].map(() =>
+      request(`http://google.com`).then(
+        res => console.log(`${new Date().toLocaleTimeString()} - ResponseCode - ${res.statusCode}`),
+        err => console.error(`${new Date().toLocaleTimeString()} - Request task rejected - ${err.message}`),
+      ),
+    ),
+  );
+  limt.terminate(false);
+  await p;
+  console.log(`${new Date().toLocaleTimeString()} - Manual Interception demo...`);
 };
 
 // invoke the main function.

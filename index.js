@@ -3,19 +3,17 @@
  * A simple and smart rate limiter for general use with promise support.
  *
  * @author Phoenix (github.com/azusa0127)
- * @version 1.0.3
+ * @version 2.0.0
  */
 const Semaphore = require(`simple-semaphore`);
 
+/** Throttling limiter class to be exported. */
 class Limiter {
   /**
-   * Creates an instance of Limiter.
-   *
-   * @param {number} [interval=1.01] Time interval length in seconds for a rate period.
-   * @param {number} [rate=10] Rate limit in an time interval.
-   * @param {bool} [evenMode=false] Spread the task evenly in the time interval, resolve a single task for every (interval/rate) second.
-   *
-   * @memberof Limiter
+   * Creates a limiter.
+   * @param {number} [interval=1.01] - The time interval in seconds.
+   * @param {number} [rate=10] - The number of operations allowed in the time interval.
+   * @param {bool} [evenMode=false] - If to resolve a single task for every (interval/rate) second instead of resolving [rate] tasks for every [interval] second.
    */
   constructor(interval = 1.01, rate = 10, evenMode = false) {
     // Initialize the internal semaphore.
@@ -32,29 +30,46 @@ class Limiter {
   }
 
   /**
-   * Enter the limiter queue.
-   *
-   * It automatically starts the interval loop at the first call and terminates the interval loop when no waiting task left.
-   *
-   * @async This is an async function.
-   * @return a promise that only resolves if meets the rate limit.
-   * @memberof Limiter
+   * Enqueue into the limiter and return a promise to be resolved automatically at the right time.
+   * @async
+   * @return {Promise<undefind>} a promise that resolves automatically at the right time.
    */
-  async enter() {
+  enter() {
     if (!this.timer) this._setTimer();
-    await this.sem.wait();
-    if (!this.sem._queue.length) this.release();
+    return this.sem.wait().then(() => {
+      if (!this.sem._queue.length) this.terminate(true);
+    });
   }
 
   /**
-   * Manually ternimate the interval loop and release all waiting task task in the queue.
-   *
-   * @memberof Limiter
+   * Throttle a function call.
+   * @param {Function} fn Function to be called after waiting.
+   * @param {...any} [...args] Arguments for calling fn().
+   * @async
+   * @return {Promise<any>} promise of return from fn(args).
    */
-  release() {
+  throttle(fn, ...args) {
+    return this.enter().then(() => fn(...args));
+  }
+
+  /**
+   * Make a throttled version of function fn.
+   * @param {Function} fn Function to be throttled.
+   * @return {Function} The throttled fn with return type of promise from @see Limiter.throttle
+   */
+  makeThrottledFn(fn) {
+    return (...args) => this.throttle(fn, ...args);
+  }
+
+  /**
+   * Manually ternimate the interval loop. [This is normally invoked by this.enter() automaticly.]
+   * @param {bool} [releaseLeftoverTasks=false] If to release tasks in the queue or reject them.
+   */
+  terminate(releaseLeftoverTasks = false) {
     clearInterval(this.timer);
     this.timer = null;
-    if (this.sem._queue.length) this.sem.signal(this.sem._queue.length);
+    if (this.sem._queue.length)
+      releaseLeftoverTasks ? this.sem.signal(this.sem._queue.length) : this.sem.rejectAll();
   }
 }
 
