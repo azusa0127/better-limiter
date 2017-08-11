@@ -3,7 +3,7 @@
  * A simple and smart rate limiter for general use with promise support.
  *
  * @author Phoenix (github.com/azusa0127)
- * @version 2.0.0
+ * @version 2.0.1
  */
 const Semaphore = require(`simple-semaphore`);
 
@@ -19,11 +19,11 @@ class Limiter {
     // Initialize the internal semaphore.
     this.sem = new Semaphore(evenMode ? 1 : rate);
     // Initialize the timer to be null and only start it at the first call.
-    this.timer = null;
+    this._timer = null;
     // Handle for the first enter call to start the interval loop.
     this._setTimer = () => {
-      if (this.timer) return; // Escape when timer is already set.
-      this.timer = evenMode
+      if (this._timer) return; // Escape when timer is already set.
+      this._timer = evenMode
         ? setInterval(() => this.sem.signal(1 - this.sem._sem), interval * 1000 / rate)
         : setInterval(() => this.sem.signal(rate - this.sem._sem), interval * 1000);
     };
@@ -35,7 +35,7 @@ class Limiter {
    * @return {Promise<undefind>} a promise that resolves automatically at the right time.
    */
   enter() {
-    if (!this.timer) this._setTimer();
+    if (!this._timer) this._setTimer();
     return this.sem.wait().then(() => {
       if (!this.sem._queue.length) this.terminate(true);
     });
@@ -66,8 +66,8 @@ class Limiter {
    * @param {bool} [releaseLeftoverTasks=false] If to release tasks in the queue or reject them.
    */
   terminate(releaseLeftoverTasks = false) {
-    clearInterval(this.timer);
-    this.timer = null;
+    clearInterval(this._timer);
+    this._timer = null;
     if (this.sem._queue.length)
       releaseLeftoverTasks ? this.sem.signal(this.sem._queue.length) : this.sem.rejectAll();
   }

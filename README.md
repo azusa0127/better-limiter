@@ -14,33 +14,41 @@ npm install better-limiter
 ```javascript
 class Limiter {
   /**
-   * Creates an instance of Limiter.
-   *
-   * @param {number} [interval=1.01] Time interval length in seconds for a rate period.
-   * @param {number} [rate=10] Rate limit in an time interval.
-   * @param {bool} [evenMode=false] Spread the task evenly in the time interval, resolve a single task for every (interval/rate) second.
-   *
-   * @memberof Limiter
+   * Creates a limiter.
+   * @param {number} [interval=1.01] - The time interval in seconds.
+   * @param {number} [rate=10] - The number of operations allowed in the time interval.
+   * @param {bool} [evenMode=false] - If to resolve a single task for every (interval/rate) second instead of resolving [rate] tasks for every [interval] second.
    */
   constructor(interval = 1.01, rate = 10, evenMode = false) {}
 
   /**
-   * Enter the limiter queue.
-   *
-   * It automatically starts the interval loop at the first call and terminates the interval loop when no waiting task left.
-   *
-   * @async This is an async function.
-   * @return a promise that only resolves if meets the rate limit. This promise never rejacts.
-   * @memberof Limiter
+   * Enqueue into the limiter and return a promise to be resolved automatically at the right time.
+   * @async
+   * @return {Promise<undefind>} a promise that resolves automatically at the right time.
    */
-  async enter() {}
+  enter() {}
 
   /**
-   * Manually ternimate the interval loop and release all waiting task task in the queue.
-   *
-   * @memberof Limiter
+   * Throttle a function call.
+   * @param {Function} fn Function to be called after waiting.
+   * @param {...any} [...args] Arguments for calling fn().
+   * @async
+   * @return {Promise<any>} promise of return from fn(args).
    */
-  release() {}
+  throttle(fn, ...args) {}
+
+  /**
+   * Make a throttled version of function fn.
+   * @param {Function} fn Function to be throttled.
+   * @return {Function} The throttled fn with return type of promise from @see Limiter.throttle
+   */
+  makeThrottledFn(fn) {}
+
+  /**
+   * Manually ternimate the interval loop. [This is normally invoked by this.enter() automaticly.]
+   * @param {bool} [releaseLeftoverTasks=false] If to release tasks in the queue or reject them.
+   */
+  terminate(releaseLeftoverTasks = false) {}
 }
 
 module.exports = Limiter;
@@ -75,6 +83,9 @@ for (let i = 0; i < 10; ++i)
 ```
 
 ## Changelog
+2.0.1 / 2017-08-10
+  * (README) API document update.
+
 2.0.0 / 2017-08-10
   * (Performance) Performance imporvement with updated `simple-semaphore`.
   + (New API) `throttle(fn, ...args)` and `makeThrottledFn(fn)` added.
