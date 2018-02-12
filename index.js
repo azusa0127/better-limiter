@@ -3,7 +3,7 @@
  * A simple and smart rate limiter with promises.
  *
  * @author Phoenix (github.com/azusa0127)
- * @version 2.1.0
+ * @version 2.2.0
  */
 const Semaphore = require(`simple-semaphore`);
 
