@@ -1,31 +1,19 @@
 {
   "name": "better-limiter",
-  "version": "2.0.1",
-  "description": "A simple and smart rate limiter in promise.",
+  "version": "2.1.0",
+  "description": "A simple and smart rate limiter with promises.",
   "scripts": {
     "test": "node example.js"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/azusa0127/better-limiter.git"
-  },
-  "keywords": [
-    "async",
-    "rate",
-    "limiter",
-    "throttle",
-    "promise"
-  ],
+  "repository": "github:azusa0127/better-limiter",
+  "keywords": ["async", "rate", "limiter", "throttle", "promise"],
   "author": "Phoenix (github.com/azusa0127)",
   "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/azusa0127/better-limiter/issues"
-  },
   "homepage": "https://github.com/azusa0127/better-limiter#readme",
   "dependencies": {
-    "simple-semaphore": "^2.0.1"
+    "simple-semaphore": "^2.1.0"
   },
   "devDependencies": {
-    "request": "^2.81.0"
+    "got": "^8.1.0"
   }
 }
